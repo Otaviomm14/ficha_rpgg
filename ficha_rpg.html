@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Ficha RPG</title>
+
+<style>
+body {
+    background: #1e1e2e;
+    color: white;
+    font-family: Segoe UI, sans-serif;
+    text-align: center;
+}
+
+.container {
+    max-width: 400px;
+    margin: auto;
+    padding-top: 30px;
+}
+
+input {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 6px;
+    border: none;
+}
+
+button {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    background: #313244;
+    color: white;
+}
+
+button:hover {
+    background: #45475a;
+}
+
+.dominio {
+    background: #cba6f7;
+    color: black;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="inicio">
+    <h2>Criar Personagem</h2>
+    <input id="nome" placeholder="Nome do personagem"><br>
+    <input id="energiaTotal" type="number" placeholder="Energia total"><br>
+    <button onclick="criarFicha()">Criar Ficha</button>
+</div>
+
+<div class="container" id="ficha" style="display:none;">
+    <h2 id="nomePersonagem"></h2>
+    <h3 id="energiaAtual"></h3>
+
+    <input id="nomeHab" placeholder="Nome da habilidade">
+    <input id="custoHab" type="number" placeholder="Custo">
+    <button onclick="adicionarHabilidade()">Adicionar</button>
+
+    <div id="listaHabilidades"></div>
+
+    <button class="dominio" onclick="expansaoDominio()">EXPANSÃO DE DOMÍNIO (-50%)</button>
+</div>
+
+<script>
+let energiaMaxima = 0;
+let energiaAtual = 0;
+
+function criarFicha() {
+    const nome = document.getElementById("nome").value;
+    energiaMaxima = parseInt(document.getElementById("energiaTotal").value);
+
+    if (!nome || !energiaMaxima) {
+        alert("Preencha nome e energia.");
+        return;
+    }
+
+    energiaAtual = energiaMaxima;
+
+    document.getElementById("inicio").style.display = "none";
+    document.getElementById("ficha").style.display = "block";
+
+    document.getElementById("nomePersonagem").innerText = nome;
+    atualizarEnergia();
+}
+
+function atualizarEnergia() {
+    document.getElementById("energiaAtual").innerText =
+        "Energia: " + energiaAtual;
+}
+
+function gastarEnergia(valor) {
+    if (energiaAtual >= valor) {
+        energiaAtual -= valor;
+        atualizarEnergia();
+    } else {
+        alert("Energia insuficiente!");
+    }
+}
+
+function adicionarHabilidade() {
+    const nome = document.getElementById("nomeHab").value;
+    const custo = parseInt(document.getElementById("custoHab").value);
+
+    if (!nome || !custo) return;
+
+    const botao = document.createElement("button");
+    botao.innerText = nome + " (-" + custo + ")";
+    botao.onclick = function() {
+        gastarEnergia(custo);
+    };
+
+    document.getElementById("listaHabilidades").appendChild(botao);
+
+    document.getElementById("nomeHab").value = "";
+    document.getElementById("custoHab").value = "";
+}
+
+function expansaoDominio() {
+    gastarEnergia(Math.floor(energiaMaxima / 2));
+}
+</script>
+
+</body>
+</html>
